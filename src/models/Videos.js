@@ -11,9 +11,17 @@ const Videos = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     videoUrl: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     duration: {
       type: DataTypes.INTEGER,
@@ -37,14 +45,14 @@ const Videos = sequelize.define(
 
 Videos.afterFind(async(video) => {
   if (video.dataValues) {
-      const url = await getFirebaseUrl(video.videoUrl)
-      video.videoUrl = url
+      const url = await getFirebaseUrl(video.imageUrl)
+      video.imageUrl = url
       return
   }
   const urls = video.map(async(item) => {
-      if(item.videoUrl){
-          const url = await getFirebaseUrl(item.videoUrl)
-          item.videoUrl = url
+      if(item.imageUrl){
+          const url = await getFirebaseUrl(item.imageUrl)
+          item.imageUrl = url
       }
   })
   await Promise.all(urls) // map async

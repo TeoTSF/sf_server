@@ -37,8 +37,8 @@ const initModels = () => {
   Post.belongsTo(Tags, { foreignKey: "tagId" });
 
   // Courses 1 ----- * Videos
-  Courses.hasMany(Videos, { foreignKey: "courseId" });
-  Videos.belongsTo(Courses, { foreignKey: "courseId" });
+  Courses.hasMany(Videos);
+  Videos.belongsTo(Courses);
 };
 
 module.exports = initModels;

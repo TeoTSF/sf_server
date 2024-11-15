@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../utils/connection");
+const { getFirebaseUrl } = require("../middlewares/firebase.middleware");
 
 const Courses = sequelize.define(
   "courses",
@@ -18,9 +19,19 @@ const Courses = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     price: {
       type: DataTypes.FLOAT,
       allowNull: false,
+      defaultValue: 0,
+    },
+    discount: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      defaultValue: 0
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -30,8 +41,25 @@ const Courses = sequelize.define(
   },
   {
     timestamps: false,
+    createdAt: true,
     tableName: 'courses',
   }
 );
+
+Courses.afterFind(async(course) => {
+  if (course.dataValues) {
+      const url = await getFirebaseUrl(course.imageUrl)
+      course.imageUrl = url
+      return
+  }
+  const urls = course.map(async(item) => {
+      if(item.imageUrl){
+          const url = await getFirebaseUrl(item.imageUrl)
+          item.imageUrl = url
+      }
+  })
+  await Promise.all(urls) // map async
+  return course
+})
 
 module.exports = Courses;

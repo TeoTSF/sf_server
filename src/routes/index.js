@@ -5,6 +5,7 @@ const postRouter = require('./post.routes');
 const tagsRouter = require('./tags.routes');
 const themesRouter = require('./themes.routes');
 const videosRouter = require('./videos.routes');
+const coursesRouter = require('./courses.routes');
 const router = express.Router();
 
 // colocar las rutas aquí
@@ -19,5 +20,7 @@ router.use("tags", tagsRouter)
 router.use("/themes", themesRouter)
 
 router.use("/videos", videosRouter)
+
+router.use("/courses", coursesRouter)
 
 module.exports = router;
