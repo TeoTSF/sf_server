@@ -5,7 +5,6 @@ const { Sequelize } = require("sequelize");
 
 const getAll = catchError(async (req, res) => {
     const {flag} = req.query;
-    console.log(flag);
     
     const queryOptions = {
       attributes: flag ? ["id", "title"]
