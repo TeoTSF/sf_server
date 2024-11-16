@@ -4,8 +4,9 @@ const Users = require('../models/Users');
 const Tags = require('../models/Tags');
 
 const getAll = catchError(async(req, res) => {
+    const {tagId} = req.query
     const results = await Post.findAll({
-        where: {status: true},
+        where: tagId ? { tagId, status: true } : {status: true},
         attributes: {exclude: ["created_by", "tagId", "updatedAt", "status"]},
         include: [
             {
