@@ -47,12 +47,13 @@ const Courses = sequelize.define(
 );
 
 Courses.afterFind(async(course) => {
-  if (course.dataValues) {
+  if(!course) return
+  if (course?.dataValues) {
       const url = await getFirebaseUrl(course.imageUrl)
       course.imageUrl = url
       return
   }
-  const urls = course.map(async(item) => {
+  const urls = course?.map(async(item) => {
       if(item.imageUrl){
           const url = await getFirebaseUrl(item.imageUrl)
           item.imageUrl = url

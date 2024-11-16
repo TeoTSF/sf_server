@@ -4,39 +4,51 @@ const Videos = require("../models/Videos");
 const { Sequelize } = require("sequelize");
 
 const getAll = catchError(async (req, res) => {
-    const {flag} = req.query;
-    
-    const queryOptions = {
-      attributes: flag ? ["id", "title"]
-        : {
-            include: [
-              [
-                Sequelize.literal(`(
+  const { flag } = req.query;
+  const queryOptions = {
+    attributes: flag
+      ? ["id", "title"]
+      : {
+          include: [
+            [
+              Sequelize.literal(`(
                   SELECT SUM("duration")
                   FROM "${Videos.getTableName()}"
                   WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
                 )`),
-                "totalDuration",
-              ],
-              [
-                Sequelize.literal(`(
+              "totalDuration",
+            ],
+            [
+              Sequelize.literal(`(
                   SELECT COUNT(*)
                   FROM "${Videos.getTableName()}"
                   WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
                 )`),
-                "videoCount",
-              ],
+              "videoCount",
             ],
-          },
-    };
-  
-    const results = await Courses.findAll(queryOptions);
-  
-    return res.json(results);
+          ],
+        },
+  };
+
+  const results = await Courses.findAll(queryOptions);
+
+  return res.json(results);
+});
+
+module.exports = { getAll };
+
+const getFreeCourse = catchError(async (req, res) => {
+  const result = await Courses.findOne({
+    where: {price: 0},
+    include: [
+      {
+        model: Videos
+      }
+    ]
   });
-  
-  module.exports = { getAll };
-  
+  if (!result) return res.json([]);
+  return res.json(result);
+});
 
 const create = catchError(async (req, res) => {
   const result = await Courses.create(req.body);
@@ -72,4 +84,5 @@ module.exports = {
   getOne,
   remove,
   update,
+  getFreeCourse
 };
