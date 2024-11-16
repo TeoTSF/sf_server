@@ -27,10 +27,6 @@ const Videos = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    courseId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
