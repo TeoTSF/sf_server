@@ -33,6 +33,16 @@ const Courses = sequelize.define(
       allowNull: false,
       defaultValue: 0
     },
+    videoCount: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    },
+    totalDuration: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    },
     status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

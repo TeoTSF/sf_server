@@ -1,33 +1,13 @@
 const catchError = require("../utils/catchError");
 const Courses = require("../models/Courses");
 const Videos = require("../models/Videos");
-const { Sequelize } = require("sequelize");
 
 const getAll = catchError(async (req, res) => {
   const { flag } = req.query;
   const queryOptions = {
     attributes: flag
       ? ["id", "title"]
-      : {
-          include: [
-            [
-              Sequelize.literal(`(
-                  SELECT SUM("duration")
-                  FROM "${Videos.getTableName()}"
-                  WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
-                )`),
-              "totalDuration",
-            ],
-            [
-              Sequelize.literal(`(
-                  SELECT COUNT(*)
-                  FROM "${Videos.getTableName()}"
-                  WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
-                )`),
-              "videoCount",
-            ],
-          ],
-        },
+      : {},
   };
 
   const results = await Courses.findAll(queryOptions);

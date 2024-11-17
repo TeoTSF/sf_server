@@ -5,39 +5,25 @@ const { Sequelize } = require("sequelize");
 
 const getAll = catchError(async (req, res) => {
   const { courseId } = req.query;
-  const videos = await Videos.findAll(
-    courseId
-      ? {where: { courseId }}
-      : {}
-  );
-  const queryOptions = {
-    attributes: {
-          include: [
-            [
-              Sequelize.literal(`(
-                  SELECT SUM("duration")
-                  FROM "${Videos.getTableName()}"
-                  WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
-                )`),
-              "totalDuration",
-            ],
-            [
-              Sequelize.literal(`(
-                  SELECT COUNT(*)
-                  FROM "${Videos.getTableName()}"
-                  WHERE "${Videos.getTableName()}"."courseId" = "${Courses.getTableName()}"."id"
-                )`),
-              "videoCount",
-            ],
-          ],
-        },
-  };
-  const course = await Courses.findByPk(courseId, queryOptions)
-  return res.json({ course, videos});
+  const videos = await Videos.findAll(courseId ? { where: { courseId } } : {});
+  const course = await Courses.findByPk(courseId);
+  return res.json({ course, videos });
 });
 
 const create = catchError(async (req, res) => {
   const result = await Videos.create(req.body);
+  const { videoCount, totalDuration } = await Courses.findByPk(
+    req.body.courseId
+  );
+  await Courses.update(
+    {
+      videoCount: videoCount + 1,
+      totalDuration: parseInt(totalDuration) + parseInt(req.body.duration),
+    },
+    {
+      where: { id: req.body.courseId },
+    }
+  );
   return res.status(201).json(result);
 });
 
