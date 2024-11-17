@@ -40,11 +40,6 @@ module.exports = { getAll };
 const getFreeCourse = catchError(async (req, res) => {
   const result = await Courses.findOne({
     where: {price: 0},
-    include: [
-      {
-        model: Videos
-      }
-    ]
   });
   if (!result) return res.json([]);
   return res.json(result);
@@ -57,7 +52,11 @@ const create = catchError(async (req, res) => {
 
 const getOne = catchError(async (req, res) => {
   const { id } = req.params;
-  const result = await Courses.findByPk(id);
+  const result = await Courses.findByPk(id, {
+    include: {
+      model: Videos
+    }
+  });
   if (!result) return res.sendStatus(404);
   return res.json(result);
 });
