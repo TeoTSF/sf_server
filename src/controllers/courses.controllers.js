@@ -18,7 +18,7 @@ const getAll = catchError(async (req, res) => {
 module.exports = { getAll };
 
 const getFreeCourse = catchError(async (req, res) => {
-  const result = await Courses.findOne({
+  const result = await Courses.findAll({
     where: {price: 0},
   });
   if (!result) return res.json([]);
