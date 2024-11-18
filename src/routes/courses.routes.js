@@ -1,4 +1,4 @@
-const { getAll, create, getOne, remove, update, getFreeCourse} = require('../controllers/courses.controllers');
+const { getAll, create, getOne, remove, update, getFreeCourse, getMyCourses} = require('../controllers/courses.controllers');
 const express = require('express');
 const upload = require('../utils/multer.js');
 const verifyJWT = require('../middlewares/auth.middleware');
@@ -13,6 +13,9 @@ coursesRouter.route('')
 
 coursesRouter.route("/free")
     .get(verifyJWT, getFreeCourse)
+
+coursesRouter.route("/my_courses")
+    .get(verifyJWT, isAdmin, getMyCourses)
     
 coursesRouter.route('/:id')
     .get(verifyJWT, getOne)

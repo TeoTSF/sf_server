@@ -1,6 +1,7 @@
 const catchError = require("../utils/catchError");
 const Courses = require("../models/Courses");
 const Videos = require("../models/Videos");
+const { UserCourse } = require("../models/IntermediateModels");
 
 const getAll = catchError(async (req, res) => {
   const { flag } = req.query;
@@ -25,7 +26,37 @@ const getFreeCourse = catchError(async (req, res) => {
   return res.json(result);
 });
 
+const getMyCourses = catchError(async (req, res) => {
+  const isAdmin = req.isAdmin;
+  const {id} = req.user
+  let result = []
+  if (isAdmin) {
+    result = await Courses.findAll({
+      where: {
+        price: { [Op.gt]: 0 },
+      },
+    });
+  } else {
+    const userCourses = await UserCourse.findAll({
+      where: {
+        userId: id,
+      },
+      attributes: ["courseId"],
+    });
+    if (!courseIds) return res.json([]);
+    const courseIds = userCourses.map((uc) => uc.courseId);
+    result = await Courses.findAll({
+      where: {
+        id: courseIds,
+      },
+    });
+  }
+  return res.json(result);
+});
+
 const create = catchError(async (req, res) => {
+  const isAdmin = req.isAdmin;
+  if(!isAdmin) return res.sendStatus(401);
   const result = await Courses.create(req.body);
   return res.status(201).json(result);
 });
@@ -43,12 +74,16 @@ const getOne = catchError(async (req, res) => {
 
 const remove = catchError(async (req, res) => {
   const { id } = req.params;
+  const isAdmin = req.isAdmin;
+  if(!isAdmin) return res.sendStatus(401);
   await Courses.destroy({ where: { id } });
   return res.sendStatus(204);
 });
 
 const update = catchError(async (req, res) => {
   const { id } = req.params;
+  const isAdmin = req.isAdmin;
+  if(!isAdmin) return res.sendStatus(401);
   const result = await Courses.update(req.body, {
     where: { id },
     returning: true,
@@ -63,5 +98,6 @@ module.exports = {
   getOne,
   remove,
   update,
-  getFreeCourse
+  getFreeCourse,
+  getMyCourses
 };

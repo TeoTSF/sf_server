@@ -1,12 +1,29 @@
 const catchError = require("../utils/catchError");
 const Videos = require("../models/Videos");
 const Courses = require("../models/Courses");
-const { Sequelize } = require("sequelize");
+const { UserCourse } = require("../models/IntermediateModels");
 
 const getAll = catchError(async (req, res) => {
   const { courseId } = req.query;
-  const videos = await Videos.findAll(courseId ? { where: { courseId } } : {});
-  const course = await Courses.findByPk(courseId);
+  const {id} = req.user
+  const isAdmin = req.isAdmin
+  let videos, course
+  const getInfoCourse = async() => {
+    videos = await Videos.findAll(courseId ? { where: { courseId } } : {});
+    course = await Courses.findByPk(courseId);
+  }
+  if (isAdmin) {
+    await getInfoCourse()
+  } else {
+    const userCourse = await UserCourse.findOne({
+      where: {
+        userId: id,
+        courseId,
+      },
+    });
+    if (!userCourse) return res.status(403)
+    await getInfoCourse()
+  }
   return res.json({ course, videos });
 });
 

@@ -8,7 +8,7 @@ const { firebaseFile } = require('../middlewares/firebase.middleware');
 const videosRouter = express.Router();
 
 videosRouter.route('')
-    .get(verifyJWT, getAll)
+    .get(verifyJWT, isAdmin, getAll)
     .post(isAdmin, upload.single("file"), firebaseFile, create);
 
 videosRouter.route('/:id')
