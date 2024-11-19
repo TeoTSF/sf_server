@@ -13,6 +13,6 @@ postRouter.route('/')
 postRouter.route('/:id')
     .get(getOne)
     .delete(isAdmin, remove)
-    .put(isAdmin, update);
+    .put(isAdmin, upload.single("file"), firebaseFile, update);
 
 module.exports = postRouter;

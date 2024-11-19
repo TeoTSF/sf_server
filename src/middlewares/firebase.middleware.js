@@ -2,6 +2,9 @@ const storage = require('../utils/firebase');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 const firebaseFile = async(req, res, next) => {
+    if(!req.file){        
+        next()
+    }
     try {
         const imgRef = ref(storage, `post/${Date.now()}-${req.file.originalname}`);
         const imgUploaded = await uploadBytes(imgRef, req.file.buffer);

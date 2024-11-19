@@ -2,6 +2,7 @@ const catchError = require("../utils/catchError");
 const Courses = require("../models/Courses");
 const Videos = require("../models/Videos");
 const { UserCourse } = require("../models/IntermediateModels");
+const { Op } = require("sequelize");
 
 const getAll = catchError(async (req, res) => {
   const { flag } = req.query;

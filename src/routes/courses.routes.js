@@ -20,6 +20,6 @@ coursesRouter.route("/my_courses")
 coursesRouter.route('/:id')
     .get(verifyJWT, getOne)
     .delete(isAdmin, remove)
-    .put(isAdmin, upload.single("file"), update);
+    .put(isAdmin, upload.single("file"), firebaseFile, update);
 
 module.exports = coursesRouter;
