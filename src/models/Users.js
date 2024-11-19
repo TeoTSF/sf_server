@@ -43,7 +43,7 @@ const Users = sequelize.define(
     passwordChangeAt: {
       type: DataTypes.INTEGER,
       allowNull: true
-  },
+    },
     signDeclare: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

@@ -1,5 +1,5 @@
 const { login, getMe, resetPaswwordMail, updatePassword, 
-    requestEmailVerification, verifyEmail } = require('../controllers/system.controllers');
+    requestEmailVerification, verifyEmail, handleSaveForm, handleGetUsers } = require('../controllers/system.controllers');
 const express = require('express');
 const verifyJWT = require('../middlewares/auth.middleware');
 
@@ -19,6 +19,12 @@ systemRouter.route("/update_password")
 
 systemRouter.route("/verify_email")
     .post(requestEmailVerification)
+
+systemRouter.route("/send_form")
+    .post(handleSaveForm)
+
+systemRouter.route("/get_registre")
+    .get(handleGetUsers)
 
 systemRouter.route("/verify_email/:token")
     .get(verifyEmail)

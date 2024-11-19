@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendMail");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
+const { guardarFormulario, obtenerRegistros } = require("../utils/firebase");
 
 //ENDPOINT SYSTEM 1 --- LOGIN
 const login = catchError(async (req, res) => {
@@ -110,6 +111,32 @@ const requestEmailVerification = catchError(async (req, res) => {
   return res.status(201).json({ success: true });
 });
 
+const handleSaveForm = async (req, res) => {
+  try {
+    const formFields = req.body;
+    const result = await guardarFormulario(formFields);
+    if (result.success) {
+      res.status(200).json({ success: true, id: result.id });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const handleGetUsers = async (req, res) => {
+  try {
+    const result = await obtenerRegistros();
+    if (result.success) {
+      res.status(200).json({ success: true, usuarios: result.usuarios });
+    } else {
+      res.status(500).json({ success: false, error: result.error });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
 module.exports = {
   login,
   resetPaswwordMail,
@@ -117,4 +144,6 @@ module.exports = {
   verifyEmail,
   getMe,
   requestEmailVerification,
+  handleSaveForm,
+  handleGetUsers
 };
