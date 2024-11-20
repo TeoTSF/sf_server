@@ -113,8 +113,15 @@ const requestEmailVerification = catchError(async (req, res) => {
 
 const handleSaveForm = async (req, res) => {
   try {
-    const formFields = req.body;
-    const result = await guardarFormulario(formFields);
+    const {email} = req.body;
+    const result = await guardarFormulario(req.body);
+    await sendEmail({
+      to: email,
+      subject: "Confirmación de Registro",
+      html: `
+      bienvenido, usted ha iniciado el proceso de registro en la Academia Trading Sin Fronteras
+      `,
+    });
     if (result.success) {
       res.status(200).json({ success: true, id: result.id });
     }
@@ -128,8 +135,6 @@ const handleGetUsers = async (req, res) => {
     const result = await obtenerRegistros();
     if (result.success) {
       res.status(200).json({ success: true, usuarios: result.usuarios });
-    } else {
-      res.status(500).json({ success: false, error: result.error });
     }
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
