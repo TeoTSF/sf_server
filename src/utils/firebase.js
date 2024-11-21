@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase/app");
 const { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } = require("firebase/firestore");
-const { getStorage, ref } = require("firebase/storage");
+const { getStorage } = require("firebase/storage");
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -40,16 +40,12 @@ const guardarFormulario = async (formData) => {
  */
 const obtenerRegistros = async () => {
   try {
-    // Define la colección y consulta ordenada por fecha de creación
     const formEntriesRef = collection(db, "formEntries");
     const q = query(formEntriesRef, orderBy("createdAt", "desc"));
-
-    // Obtiene los documentos
     const querySnapshot = await getDocs(q);
     const usuarios = [];
-
     querySnapshot.forEach((doc) => {
-      usuarios.push({ id: doc.id, ...doc.data() }); // Incluye el ID del documento
+      usuarios.push({ id: doc.id, ...doc.data() });
     });
 
     return { success: true, usuarios };
