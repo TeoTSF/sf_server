@@ -5,6 +5,7 @@ const sendEmail = require("../utils/sendMail");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { guardarFormulario, obtenerRegistros } = require("../utils/firebase");
+const { welcomeEmail } = require("../utils/welcomeEmail");
 
 //ENDPOINT SYSTEM 1 --- LOGIN
 const login = catchError(async (req, res) => {
@@ -118,9 +119,7 @@ const handleSaveForm = async (req, res) => {
     await sendEmail({
       to: email,
       subject: "Confirmación de Registro",
-      html: `
-      bienvenido, usted ha iniciado el proceso de registro en la Academia Trading Sin Fronteras
-      `,
+      html: welcomeEmail(),
     });
     if (result.success) {
       res.status(200).json({ success: true, id: result.id });
