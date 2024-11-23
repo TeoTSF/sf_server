@@ -60,8 +60,7 @@ const resetPaswwordMail = catchError(async (req, res) => {
 const updatePassword = catchError(async (req, res) => {
   const { password, token } = req.body;
   const user = await Users.findOne({ where: { resetCode: token } });
-  if (!user)
-    return res.status(401).json({ message: "Unauthorized" });
+  if (!user) return res.status(401).json({ message: "Unauthorized" });
   jwt.verify(token, process.env.TOKEN_SECRET);
   const hashedPassword = await bcrypt.hash(password, 10);
   await Users.update(
@@ -114,7 +113,7 @@ const requestEmailVerification = catchError(async (req, res) => {
 
 const handleSaveForm = async (req, res) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
     const result = await guardarFormulario(req.body);
     await sendEmail({
       to: email,
@@ -130,6 +129,8 @@ const handleSaveForm = async (req, res) => {
 };
 
 const handleGetUsers = async (req, res) => {
+  const isAdmin = req.isAdmin;
+  if (!isAdmin) return res.status(401).json({ message: "Unauthorized" });
   try {
     const result = await obtenerRegistros();
     if (result.success) {
@@ -140,6 +141,20 @@ const handleGetUsers = async (req, res) => {
   }
 };
 
+const verifyAdmin = async (req, res) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401);
+  const token = authHeader.split(" ")[1];
+  const { user } = jwt.verify(token, process.env.TOKEN_SECRET);
+  if (user.roleId !== 1 || !user.status) {
+    const resu = await Users.update(
+      {status: false},
+      { where: {id: user.id}, returning: true }
+  )
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  return res.status(200)
+};
 
 module.exports = {
   login,
@@ -149,5 +164,6 @@ module.exports = {
   getMe,
   requestEmailVerification,
   handleSaveForm,
-  handleGetUsers
+  handleGetUsers,
+  verifyAdmin,
 };

@@ -1,6 +1,7 @@
 const catchError = require('../utils/catchError');
 const Users = require('../models/Users');
 const Role = require('../models/Role');
+const { setCoursesUsers } = require('./userCourse.controllers');
 
 const getAll = catchError(async(req, res) => {
     const isAdmin = req.isAdmin;
@@ -8,15 +9,17 @@ const getAll = catchError(async(req, res) => {
     const results = await Users.findAll({
         include:
         {model: Role, attributes: ['role']},
-        order: [['id', 'ASC']]
+        order: [['status', 'DESC']]
     });
     return res.json(results);
 });
 
 const create = catchError(async(req, res) => {
     const isAdmin = req.isAdmin;
+    const {courseId} = req.body
     if (!isAdmin) return res.status(401).json({ message: "Unauthorized" });
-    await Users.create(req.body);
+    const {id} = await Users.create(req.body);
+    if(courseId != null) setCoursesUsers(id, courseId)
     return res.status(201).json({success: true});
 });
 
@@ -38,12 +41,13 @@ const enableOrDisableUser = catchError(async (req, res) => {
 
 const update = catchError(async(req, res) => {
     const { id } = req.params;
-    const result = await Users.update(
+    const {courseId} = req.body
+    await Users.update(
         req.body,
         { where: {id}, returning: true }
     );
-    if(result[0] === 0) return res.sendStatus(404);
-    return res.json(result[1][0]);
+    if(courseId != null) await setCoursesUsers(id, courseId)
+    return res.json({success: true});
 });
 
 module.exports = {

@@ -1,7 +1,8 @@
 const { login, getMe, resetPaswwordMail, updatePassword, 
-    requestEmailVerification, verifyEmail, handleSaveForm, handleGetUsers } = require('../controllers/system.controllers');
+    requestEmailVerification, verifyEmail, handleSaveForm, handleGetUsers, verifyAdmin} = require('../controllers/system.controllers');
 const express = require('express');
 const verifyJWT = require('../middlewares/auth.middleware');
+const isAdmin = require('../middlewares/isAdmin.middleware');
 
 const systemRouter = express.Router();
 
@@ -24,7 +25,10 @@ systemRouter.route("/send_form")
     .post(handleSaveForm)
 
 systemRouter.route("/get_registre")
-    .get(handleGetUsers)
+    .get(isAdmin, handleGetUsers)
+
+systemRouter.route("/verifyAdmin")
+    .get(verifyAdmin)
 
 systemRouter.route("/verify_email/:token")
     .get(verifyEmail)

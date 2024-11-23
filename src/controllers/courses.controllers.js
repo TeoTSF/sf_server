@@ -44,8 +44,8 @@ const getMyCourses = catchError(async (req, res) => {
       },
       attributes: ["courseId"],
     });
-    if (!courseIds) return res.json([]);
     const courseIds = userCourses.map((uc) => uc.courseId);
+    if (!courseIds) return res.json([]);
     result = await Courses.findAll({
       where: {
         id: courseIds,
