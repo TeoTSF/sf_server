@@ -1,46 +1,31 @@
 const sequelize = require("../utils/connection");
 const Users = require("../models/Users");
-const Role = require("../models/Roles");
-const Location = require("../models/Location");
-const Sponsorship = require("../models/Sponsorship");
+const Role = require("../models/Role");
 const initModels = require('../models');
+const Tags = require("../models/Tags");
 
-const role = [{ name: "S admin" }, { name: "Admin" }, { name: "Profesional" }];
+const role = [{ role: "Admin" }, { role: "usuario" }];
 
-const location = [{name: "Batán"}, {name: "Colón"}]
-
-const sponsor = [{sponsor: "Batán"}, {sponsor: "colón"}]
+const tag = [{tag: "Trading"}, {tag: "Análisis"}, {tag: "Resultados"}, {tag: "Clases"}, {tag: "Gestión"}, {tag: "Señales"}]
 
 const users = [
   {
-    firstname: "Marco",
+    name: "Marco",
     lastname: "Cardenas",
     email: "marco2616@gmail.com",
-    password: "12345678",
+    birthday: "1983-04-05",
+    documentNumber: "16261755",
+    signDeclare: true,
     roleId: 1,
   },
-  {
-    firstname: "Carmen",
-    lastname: "Gomez",
-    email: "carmenluisag2011@gmail.com",
-    password: "12345678",
-    roleId: 1,
-  },
-  {
-    firstname: "Carlos",
-    lastname: "Messier",
-    email: "messiercarlos1@gmail.com",
-    password: "12345678",
-    roleId: 1,
-  },
+  
 ];
 
 
 async function seedCreate() {
   await Role.bulkCreate(role);
+  await Tags.bulkCreate(tag);
   await Users.bulkCreate(users);
-  await Location.bulkCreate(location)
-  await Sponsorship.bulkCreate(sponsor)
 }
 
 // agregar force: true a la configuración de Sequelize
