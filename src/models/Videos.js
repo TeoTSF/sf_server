@@ -45,6 +45,7 @@ Videos.afterFind(async(video) => {
       video.imageUrl = url
       return
   }
+  video.sort((a, b) => a.id - b.id);
   const urls = video.map(async(item) => {
       if(item.imageUrl){
           const url = await getFirebaseUrl(item.imageUrl)
