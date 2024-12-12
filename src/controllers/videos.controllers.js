@@ -9,7 +9,12 @@ const getAll = catchError(async (req, res) => {
   const isAdmin = req.isAdmin
   let videos, course
   const getInfoCourse = async() => {
-    videos = await Videos.findAll(courseId ? { where: { courseId } } : {});
+    videos = await Videos.findAll(courseId ? { 
+      where: { courseId },
+      order: [['id', 'ASC']]
+    } : {
+      order: [['id', 'ASC']]
+    });
     course = await Courses.findByPk(courseId);
   }
   if (isAdmin) {
