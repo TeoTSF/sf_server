@@ -2,11 +2,12 @@ const catchError = require('../utils/catchError');
 const Post = require('../models/Post');
 const Users = require('../models/Users');
 const Tags = require('../models/Tags');
+const { Op } = require('sequelize');
 
 const getAll = catchError(async(req, res) => {
     const {tagId} = req.query
     const results = await Post.findAll({
-        where: tagId ? { tagId, status: true } : {status: true},
+        where: tagId ? { tagId, status: true } : { status: true, tagId: { [Op.ne]: 6 } },
         attributes: {exclude: ["created_by", "tagId", "updatedAt", "status"]},
         include: [
             {
