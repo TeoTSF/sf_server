@@ -1,4 +1,4 @@
-const { getAll, create, getOne, remove, update } = require('../controllers/post.controllers');
+const { getAll, create, getOne, remove, update, getAllAdmin } = require('../controllers/post.controllers');
 const express = require('express');
 const upload = require('../utils/multer.js');
 const { firebaseFile } = require('../middlewares/firebase.middleware');
@@ -11,7 +11,7 @@ postRouter.route('/')
     .post(isAdmin, upload.single("file"), firebaseFile, create);
 
 postRouter.route('/admin')
-    .get(isAdmin,getAll)
+    .get(isAdmin, getAllAdmin)
 
 postRouter.route('/:id')
     .get(getOne)

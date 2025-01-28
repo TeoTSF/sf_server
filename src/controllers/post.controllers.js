@@ -3,13 +3,12 @@ const Post = require('../models/Post');
 const Users = require('../models/Users');
 const Tags = require('../models/Tags');
 const { Op } = require('sequelize');
+const paginate = require('../utils/pagination');
 
 const getAll = catchError(async(req, res) => {
     const {tagId} = req.query
-    const isAdmin = req?.isAdmin
-    let isAdminCondition = isAdmin ? {} : {tagId: { [Op.ne]: 6 }}
     const results = await Post.findAll({
-        where: tagId ? { tagId, status: true } : { status: true,  ...isAdminCondition },
+        where: tagId ? { tagId, status: true } : { status: true, tagId: { [Op.ne]: 6 }},
         attributes: {exclude: ["created_by", "tagId", "updatedAt", "status"]},
         include: [
             {
@@ -26,6 +25,30 @@ const getAll = catchError(async(req, res) => {
         order: [["id", "DESC"]]
     });
     return res.json(results);
+});
+
+const getAllAdmin = catchError(async (req, res) => {
+    if(!req.isAdmin) return res.sendStatus(401);
+    const { page } = req.query;
+    const paginatedResults = await paginate({
+        model: Post,
+        attributes: { exclude: ["created_by", "tagId", "updatedAt", "status"] },
+        include: [
+            {
+                model: Users,
+                attributes: ["id", "name", "lastname"]
+            },
+            {
+                model: Tags,
+                attributes: {
+                    exclude: ["status"]
+                }
+            }
+        ],
+        order: [["id", "DESC"]],
+        page
+    });
+    return res.json(paginatedResults);
 });
 
 const create = catchError(async(req, res) => {
@@ -80,5 +103,6 @@ module.exports = {
     create,
     getOne,
     remove,
-    update
+    update,
+    getAllAdmin
 }
