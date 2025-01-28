@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 
 const getAll = catchError(async(req, res) => {
     const {tagId} = req.query
-    const isAdmin = req.isAdmin
+    const isAdmin = req?.isAdmin
     let isAdminCondition = isAdmin ? {} : {tagId: { [Op.ne]: 6 }}
     const results = await Post.findAll({
         where: tagId ? { tagId, status: true } : { status: true,  ...isAdminCondition },
