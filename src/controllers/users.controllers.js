@@ -2,16 +2,22 @@ const catchError = require('../utils/catchError');
 const Users = require('../models/Users');
 const Role = require('../models/Role');
 const { setCoursesUsers } = require('./userCourse.controllers');
+const paginate = require('../utils/pagination');
 
-const getAll = catchError(async(req, res) => {
+const getAll = catchError(async (req, res) => {
+    const { page } = req.query;
     const isAdmin = req.isAdmin;
-    if(!isAdmin) return res.sendStatus(401);
-    const results = await Users.findAll({
-        include:
-        {model: Role, attributes: ['role']},
-        order: [['status', 'DESC']]
+    if (!isAdmin) return res.sendStatus(401);
+    const paginatedResults = await paginate({
+        model: Users,
+        include: {
+            model: Role,
+            attributes: ['role'],
+        },
+        order: [['id', 'DESC']],
+        page,
     });
-    return res.json(results);
+    return res.json(paginatedResults);
 });
 
 const create = catchError(async(req, res) => {
