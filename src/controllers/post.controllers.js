@@ -20,7 +20,8 @@ const getAll = catchError(async(req, res) => {
                     exclude: ["status"]
                 }
             }
-        ]
+        ],
+        order: [["id", "DESC"]]
     });
     return res.json(results);
 });
