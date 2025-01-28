@@ -7,7 +7,7 @@ const isAdmin = require('../middlewares/isAdmin.middleware');
 const postRouter = express.Router();
 
 postRouter.route('/')
-    .get(getAll)
+    .get(isAdmin,getAll)
     .post(isAdmin, upload.single("file"), firebaseFile, create);
 
 postRouter.route('/:id')
