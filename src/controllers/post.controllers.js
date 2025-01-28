@@ -6,8 +6,10 @@ const { Op } = require('sequelize');
 
 const getAll = catchError(async(req, res) => {
     const {tagId} = req.query
+    const isAdmin = req.isAdmin
+    let isAdminCondition = isAdmin ? {} : {tagId: { [Op.ne]: 6 }}
     const results = await Post.findAll({
-        where: tagId ? { tagId, status: true } : { status: true, tagId: { [Op.ne]: 6 } },
+        where: tagId ? { tagId, status: true } : { status: true,  ...isAdminCondition },
         attributes: {exclude: ["created_by", "tagId", "updatedAt", "status"]},
         include: [
             {
@@ -20,7 +22,8 @@ const getAll = catchError(async(req, res) => {
                     exclude: ["status"]
                 }
             }
-        ]
+        ],
+        order: [["id", "DESC"]]
     });
     return res.json(results);
 });

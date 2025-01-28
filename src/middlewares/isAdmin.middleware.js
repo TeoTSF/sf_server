@@ -10,8 +10,8 @@ const isAdmin = (req, res, next) => {
         // if (user.roleId !== 1 || !user.status) {
         //     return res.status(401).json({ message: "Unauthorized" });
         // }
-        req.isAdmin = user.roleId == 1;
-        req.userId = user.id
+        req.isAdmin = user?.roleId == 1;
+        req.userId = user?.id
         next();
     } catch (err) {
         return res.status(401).json({ message: "Invalid token" });
