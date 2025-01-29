@@ -19,10 +19,11 @@ postRouter.route("/admin")
   .get(isAdmin, getAllAdmin)
   .post(isAdmin, upload.single("file"), firebaseFile, create);
 
-postRouter.route("/admin/:id")
-  .delete(isAdmin, remove)
-  .put(isAdmin, upload.single("file"), firebaseFile, update);
+// postRouter.route("/admin/:id")
 
-  postRouter.route("/:id").get(getOne);
+postRouter.route("/:id")
+    .get(getOne)
+    .delete(isAdmin, remove)
+    .put(isAdmin, upload.single("file"), firebaseFile, update);
 
 module.exports = postRouter;
